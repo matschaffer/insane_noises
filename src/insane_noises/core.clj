@@ -19,16 +19,22 @@
        (+ (sin-osc freq)
            (rlpf (saw freq) (* 1.1 freq) 0.4)))))
 
-(def oxygen (midi-in "keystation"))
-(defn midi-player [event ts]
-  (prn event))
-(midi-handle-events oxygen #'midi-player)
 
 (db)
 
 (trem)
 
 (ctl trem :rate 15)
+
+(def m (metronome 120))
+(defn tremstep []
+  (do
+    (at (m 0) (ctl trem :freq (midicps 60)))
+    (at (m 1) (ctl trem :freq (midicps 62)))
+    (at (m 2) (ctl trem :freq (midicps 64)))
+    (at (m 3) (ctl trem :freq (midicps 65)))))
+(trem)
+(tremstep)
 
 (buzz)
 
