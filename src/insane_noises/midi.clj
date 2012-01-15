@@ -4,6 +4,7 @@
 
 (use 'overtone.live)
 (use 'insane-noises.inst)
+(use 'insane-noises.turk)
 
 (def nano (midi-in "nanoKONTROL"))
 (defn note? [event]
@@ -14,15 +15,18 @@
       (> vel 0))))
 (defn route-nano [event ts]
   (let [note (:note event)]
-    (if (note? event)
-      (do (foo (+ note 60) 0.8) (def played-note note))
-      (def unmapped-event event))))
+    (if (> (:vel event) 0)
+      (case note
+        23 (turk-left)
+        31 (turk-right)
+        (def unmapped-event event)))))
 
-(def oxygen (midi-in "keystation"))
-(defn route-oxygen [event ts]
-    (foo (:note event) (/ (:vel event) 90.0)))
+(midi-handle-events nano   #'route-nano)
 
 (comment
+  (def oxygen (midi-in "keystation"))
+  (defn route-oxygen [event ts]
+      (foo (:note event) (/ (:vel event) 90.0)))
+
   (midi-handle-events oxygen #'route-oxygen)
-  (midi-handle-events nano   #'route-nano)
-  )
+)
